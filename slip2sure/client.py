@@ -5,7 +5,7 @@ from io import BytesIO
 from uuid import uuid4
 
 from .exception import Slip2SureError
-from .model import Slip2SureResponse
+from .model import Slip2SureTruemoney, Slip2SureBankSlip
 
 class Slip2SureAPI:
     __API_URL = "https://api.slip2sure.com/api/v0"
@@ -39,7 +39,21 @@ class Slip2SureAPI:
                 if response.status != 200:
                     raise Slip2SureError(js["result"], js["message"])
 
-                return Slip2SureResponse(**js)
+                return Slip2SureTruemoney(**js)
+
+    async def scanBankSlipByPayload(self, payload: str):
+        
+        async with aiohttp.ClientSession() as session:
+            async with session.post(f"{self.__API_URL}/bank/v0/verifyByPayload", headers=self.__getHeaders(), json={"payload": payload}) as response:
+                # Parse to JSON
+                js = await response.json()
+                # Check if success or not
+                if response.status != 200:
+                    raise Slip2SureError(js["result"], js["message"])
+                    
+                
+                print(js)
+                return Slip2SureBankSlip(**js)
 
     def __getHeaders(self):
         return {
