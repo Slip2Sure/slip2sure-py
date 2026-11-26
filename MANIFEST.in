@@ -1,0 +1,8 @@
+# The wheel installs only the slip2sure package; these extras go into the
+# sdist so the source release is complete and the tests are runnable from it.
+include pyproject.toml
+include README.md
+include LICENSE
+recursive-include tests *.py
+global-exclude __pycache__/*
+global-exclude *.py[cod]
